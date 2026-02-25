@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import OperationalDashboard from "./components/operational/OperationalDashboard";
-import PerformanceDashboard from "./components/performance/PerformanceDashboard";
-import GeographicDashboard from "./components/geographic/GeographicDashboard";
-import AIInsightsDashboard from "./components/ai-insights/AIInsightsDashboard";
-import ComplianceDashboard from "./components/compliance/ComplianceDashboard";
+import OperationalDashboard from "./components/operational/ComplianceStyleOperationalDashboard";
+import PerformanceDashboard from "./components/performance/NewPerformanceDashboard";
+import GeographicDashboard from "./components/geographic/GeoSanitationDashboard";
+import AIInsightsDashboard from "./components/ai-insights/ComplianceStyleAIDashboard";
+import ComplianceDashboard from "./components/compliance/ComplianceStyleComplianceDashboard";
 import AttendanceDashboard from "./components/attendance/AttendanceDashboard";
 
 export default function Home() {
@@ -48,11 +48,11 @@ export default function Home() {
             {["Dashboard", "Operational", "Performance", "Geographic", "AI Insights", "Compliance", "Attendance"].map((item) => (
               <li key={item}>
                 <button
-                  onClick={() => setActiveNav(item)}
                   className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeNav === item
-                    ? "bg-green-500 text-white"
+                    ? "bg-blue-500 text-white"
                     : "text-gray-700 hover:bg-gray-100"
                     }`}
+                  onClick={() => setActiveNav(item)}
                 >
                   {item}
                 </button>
@@ -63,43 +63,44 @@ export default function Home() {
 
         {/* Filters */}
         <div className="mt-8 px-4">
-          <h3 className="text-sm font-semibold text-gray-600 mb-3">Time Filter</h3>
-          <div className="flex gap-2 mb-6">
-            {["Day", "Week", "Month"].map((time) => (
-              <button
-                key={time}
-                onClick={() => setSelectedTime(time)}
-                className={`px-3 py-1 rounded text-sm ${selectedTime === time
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-              >
-                {time}
-              </button>
-            ))}
+          <div>
+            <label className="text-sm font-semibold text-gray-600 block mb-1">Time</label>
+            <select
+              value={selectedTime}
+              onChange={(e) => setSelectedTime(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="Day">Day</option>
+              <option value="Week">Week</option>
+              <option value="Month">Month</option>
+            </select>
           </div>
 
-          <div className="space-y-3">
-            <div>
-              <label className="text-sm font-semibold text-gray-600 block mb-1">Cleaner Name</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                <option>All Cleaners</option>
-              </select>
-            </div>
+          <div className="mt-4">
+            <label className="text-sm font-semibold text-gray-600 block mb-1">Shift</label>
+            <select
+              value={selectedShift}
+              onChange={(e) => setSelectedShift(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="Morning">Morning</option>
+              <option value="Evening">Evening</option>
+              <option value="Night">Night</option>
+            </select>
+          </div>
 
-            <div>
-              <label className="text-sm font-semibold text-gray-600 block mb-1">Toilet ID</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                <option>All Toilets</option>
-              </select>
-            </div>
+          <div className="mt-4">
+            <label className="text-sm font-semibold text-gray-600 block mb-1">Toilet ID</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <option>All Toilets</option>
+            </select>
+          </div>
 
-            <div>
-              <label className="text-sm font-semibold text-gray-600 block mb-1">Zone Filter</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                <option>All Zones</option>
-              </select>
-            </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-600 block mb-1">Zone Filter</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <option>All Zones</option>
+            </select>
           </div>
         </div>
       </div>
