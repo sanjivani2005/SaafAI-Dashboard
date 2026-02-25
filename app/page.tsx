@@ -1,65 +1,145 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import OperationalDashboard from "./components/operational/OperationalDashboard";
+import PerformanceDashboard from "./components/performance/PerformanceDashboard";
+import GeographicDashboard from "./components/geographic/GeographicDashboard";
+import AIInsightsDashboard from "./components/ai-insights/AIInsightsDashboard";
+import ComplianceDashboard from "./components/compliance/ComplianceDashboard";
+import AttendanceDashboard from "./components/attendance/AttendanceDashboard";
 
 export default function Home() {
+  const [selectedTime, setSelectedTime] = useState("Day");
+  const [selectedShift, setSelectedShift] = useState("Morning");
+  const [activeNav, setActiveNav] = useState("Operational");
+
+  const renderDashboard = () => {
+    switch (activeNav) {
+      case "Dashboard":
+        return <OperationalDashboard />;
+      case "Operational":
+        return <OperationalDashboard />;
+      case "Performance":
+        return <PerformanceDashboard />;
+      case "Geographic":
+        return <GeographicDashboard />;
+      case "AI Insights":
+        return <AIInsightsDashboard />;
+      case "Compliance":
+        return <ComplianceDashboard />;
+      case "Attendance":
+        return <AttendanceDashboard />;
+      default:
+        return <OperationalDashboard />;
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-md">
+        <div className="p-4">
+          <h2 className="text-xl font-bold text-gray-800">SAAFAI</h2>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Navigation */}
+        <nav className="mt-6">
+          <ul className="space-y-2 px-4">
+            {["Dashboard", "Operational", "Performance", "Geographic", "AI Insights", "Compliance", "Attendance"].map((item) => (
+              <li key={item}>
+                <button
+                  onClick={() => setActiveNav(item)}
+                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeNav === item
+                    ? "bg-green-500 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                >
+                  {item}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Filters */}
+        <div className="mt-8 px-4">
+          <h3 className="text-sm font-semibold text-gray-600 mb-3">Time Filter</h3>
+          <div className="flex gap-2 mb-6">
+            {["Day", "Week", "Month"].map((time) => (
+              <button
+                key={time}
+                onClick={() => setSelectedTime(time)}
+                className={`px-3 py-1 rounded text-sm ${selectedTime === time
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+              >
+                {time}
+              </button>
+            ))}
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <label className="text-sm font-semibold text-gray-600 block mb-1">Cleaner Name</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option>All Cleaners</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-gray-600 block mb-1">Toilet ID</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option>All Toilets</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-gray-600 block mb-1">Zone Filter</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option>All Zones</option>
+              </select>
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200">
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold text-gray-800">SAAFAI Operational Dashboard - Real-Time Monitoring</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="p-2 rounded-lg hover:bg-gray-100">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </button>
+              <button className="p-2 rounded-lg hover:bg-gray-100">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </button>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                  A
+                </div>
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <main className="flex-1 p-6">
+          {renderDashboard()}
+        </main>
+      </div>
     </div>
   );
 }
