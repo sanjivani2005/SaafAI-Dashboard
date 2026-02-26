@@ -1,41 +1,58 @@
 "use client";
 
 import { useState } from "react";
-import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from "recharts";
 
-const resolutionTimeData = [
-  { day: "Mon", hours: 2.5 },
-  { day: "Tue", hours: 2.2 },
-  { day: "Wed", hours: 1.8 },
-  { day: "Thu", hours: 1.5 },
-  { day: "Fri", hours: 1.2 },
-  { day: "Sat", hours: 1.0 },
+const monthlyData = [
+  { month: "Jan", complaints: 45, resolved: 42, pending: 3 },
+  { month: "Feb", complaints: 52, resolved: 48, pending: 4 },
+  { month: "Mar", complaints: 38, resolved: 35, pending: 3 },
+  { month: "Apr", complaints: 61, resolved: 58, pending: 3 },
+  { month: "May", complaints: 55, resolved: 52, pending: 3 },
+  { month: "Jun", complaints: 48, resolved: 45, pending: 3 },
 ];
 
-const issueDistribution = [
-  { name: "Infrastructure Issues", value: 58, color: "#3B82F6" },
-  { name: "Cleaner Performance", value: 42, color: "#10B981" },
+const categoryData = [
+  { name: "Cleaning", value: 35, color: "#3B82F6" },
+  { name: "Maintenance", value: 28, color: "#10B981" },
+  { name: "Waste Management", value: 22, color: "#F59E0B" },
+  { name: "Infrastructure", value: 15, color: "#EF4444" },
 ];
 
-const operationalAlerts = [
-  { id: "OP001", assignedTo: "Rajesh Kumar", timeRemaining: "2h 15m", status: "Pending" },
-  { id: "OP002", assignedTo: "Sunita Patel", timeRemaining: "45m", status: "In Progress" },
-  { id: "OP003", assignedTo: "Amit Singh", timeRemaining: "5h 30m", status: "Escalated" },
-  { id: "OP004", assignedTo: "Priya Sharma", timeRemaining: "Resolved", status: "Resolved" },
-  { id: "OP005", assignedTo: "Vijay Kumar", timeRemaining: "1h 10m", status: "In Progress" },
+const performanceData = [
+  { area: "Downtown", efficiency: 92, complaints: 12 },
+  { area: "North Zone", efficiency: 88, complaints: 18 },
+  { area: "South Zone", efficiency: 85, complaints: 22 },
+  { area: "East Zone", efficiency: 90, complaints: 15 },
+  { area: "West Zone", efficiency: 87, complaints: 19 },
+];
+
+const recentActivities = [
+  { id: "OP001", type: "Cleaning", location: "Downtown Plaza", status: "Completed", time: "2 hours ago" },
+  { id: "OP002", type: "Maintenance", location: "North Park", status: "In Progress", time: "1 hour ago" },
+  { id: "OP003", type: "Waste Collection", location: "South Market", status: "Pending", time: "30 mins ago" },
+  { id: "OP004", type: "Cleaning", location: "East Street", status: "Completed", time: "3 hours ago" },
+  { id: "OP005", type: "Maintenance", location: "West Garden", status: "In Progress", time: "45 mins ago" },
 ];
 
 export default function OperationalDashboard() {
-  const [slaStatus, setSlaStatus] = useState("all");
-  const [timeRange, setTimeRange] = useState("today");
-  const [category, setCategory] = useState("all");
+  const [timeRange, setTimeRange] = useState("month");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Pending": return "text-yellow-600 bg-yellow-100";
+      case "Completed": return "text-green-600 bg-green-100";
       case "In Progress": return "text-blue-600 bg-blue-100";
-      case "Escalated": return "text-red-600 bg-red-100";
-      case "Resolved": return "text-green-600 bg-green-100";
+      case "Pending": return "text-yellow-600 bg-yellow-100";
+      default: return "text-gray-600 bg-gray-100";
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "Cleaning": return "text-blue-600 bg-blue-100";
+      case "Maintenance": return "text-orange-600 bg-orange-100";
+      case "Waste Collection": return "text-green-600 bg-green-100";
       default: return "text-gray-600 bg-gray-100";
     }
   };
@@ -45,45 +62,12 @@ export default function OperationalDashboard() {
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md">
         {/* Navigation */}
-        <nav className="mt-6">
-          <ul className="space-y-2 px-4">
-            {["Dashboard", "Operational", "Performance", "Geographic", "AI Insights", "Compliance", "Attendance"].map((item) => (
-              <li key={item}>
-                <button
-                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                    item === "Operational"
-                      ? "bg-green-500 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {item}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
 
         {/* Filters */}
         <div className="mt-8 px-4">
-          <h3 className="text-sm font-semibold text-gray-600 mb-3">SLA Status</h3>
-          <div className="space-y-2 mb-6">
-            {["all", "compliant", "breached"].map((status) => (
-              <button
-                key={status}
-                onClick={() => setSlaStatus(status)}
-                className={`w-full text-left px-3 py-2 rounded text-sm capitalize ${slaStatus === status
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-              >
-                {status === "all" ? "All" : status.charAt(0).toUpperCase() + status.slice(1)}
-              </button>
-            ))}
-          </div>
-
           <h3 className="text-sm font-semibold text-gray-600 mb-3">Time Range</h3>
           <div className="space-y-2 mb-6">
-            {["today", "week", "month"].map((range) => (
+            {["week", "month", "quarter"].map((range) => (
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}
@@ -97,18 +81,18 @@ export default function OperationalDashboard() {
             ))}
           </div>
 
-          <h3 className="text-sm font-semibold text-gray-600 mb-3">Category</h3>
+          <h3 className="text-sm font-semibold text-gray-600 mb-3">Status Filter</h3>
           <div className="space-y-2">
-            {["all", "infrastructure", "cleaner issues"].map((cat) => (
+            {["all", "completed", "in-progress", "pending"].map((status) => (
               <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`w-full text-left px-3 py-2 rounded text-sm capitalize ${category === cat
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={`w-full text-left px-3 py-2 rounded text-sm capitalize ${statusFilter === status
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
               >
-                {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+                {status.replace("-", " ")}
               </button>
             ))}
           </div>
@@ -117,163 +101,85 @@ export default function OperationalDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200">
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold text-gray-800">Operational Dashboard</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="p-2 rounded-lg hover:bg-gray-100">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </button>
+              <button className="p-2 rounded-lg hover:bg-gray-100">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </header>
+
         {/* Dashboard Content */}
         <main className="flex-1 p-6">
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Total Facilities</h3>
-              <p className="text-2xl font-bold text-gray-800">182</p>
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Total Complaints</h3>
+              <p className="text-2xl font-bold text-gray-800">299</p>
+              <p className="text-xs text-green-600 mt-1">↑ 12% from last month</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Active Complaints</h3>
-              <p className="text-2xl font-bold text-gray-800">24</p>
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Resolved</h3>
+              <p className="text-2xl font-bold text-gray-800">280</p>
+              <p className="text-xs text-green-600 mt-1">↑ 8% from last month</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Compliance %</h3>
-              <p className="text-2xl font-bold text-gray-800">87.5%</p>
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Pending</h3>
+              <p className="text-2xl font-bold text-gray-800">19</p>
+              <p className="text-xs text-red-600 mt-1">↑ 3% from last month</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Avg Resolution Time</h3>
-              <p className="text-2xl font-bold text-gray-800">1.8 hrs</p>
-            </div>
-          </div>
-
-          {/* SLA Compliance Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* Gauge Chart */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">SLA Compliance</h3>
-              <div className="flex items-center justify-center">
-                <div className="relative w-48 h-48">
-                  {/* Gauge Background */}
-                  <svg className="transform -rotate-90 w-48 h-48">
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      stroke="#E5E7EB"
-                      strokeWidth="16"
-                      fill="none"
-                    />
-                    {/* Green Zone */}
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      stroke="#10B981"
-                      strokeWidth="16"
-                      fill="none"
-                      strokeDasharray="125.6 376.8"
-                      strokeDashoffset="0"
-                    />
-                    {/* Yellow Zone */}
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      stroke="#F59E0B"
-                      strokeWidth="16"
-                      fill="none"
-                      strokeDasharray="125.6 376.8"
-                      strokeDashoffset="125.6"
-                    />
-                    {/* Red Zone */}
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      stroke="#EF4444"
-                      strokeWidth="16"
-                      fill="none"
-                      strokeDasharray="125.6 376.8"
-                      strokeDashoffset="251.2"
-                    />
-                    {/* Current Value */}
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      stroke="#3B82F6"
-                      strokeWidth="16"
-                      fill="none"
-                      strokeDasharray="50.24 452.16"
-                      strokeDashoffset="0"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-3xl font-bold text-gray-800">87.5%</p>
-                      <p className="text-sm text-gray-600">Compliant</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Real-Time Alert Status Table */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Real-Time Alert Status</h3>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Complaint ID</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Assigned Cleaner</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Time Remaining</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {operationalAlerts.map((alert) => (
-                      <tr key={alert.id}>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{alert.id}</td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{alert.assignedTo}</td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{alert.timeRemaining}</td>
-                        <td className="px-4 py-2 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(alert.status)}`}>
-                            {alert.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Efficiency Rate</h3>
+              <p className="text-2xl font-bold text-gray-800">93.6%</p>
+              <p className="text-xs text-green-600 mt-1">↑ 2.1% from last month</p>
             </div>
           </div>
 
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* Resolution Time Trend */}
+            {/* Monthly Complaints Trend */}
             <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Resolution Time Trend</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Monthly Complaints Trend</h3>
               <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={resolutionTimeData}>
+                <LineChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
+                  <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="hours" stroke="#3B82F6" strokeWidth={2} />
+                  <Legend />
+                  <Line type="monotone" dataKey="complaints" stroke="#3B82F6" strokeWidth={2} name="Total Complaints" />
+                  <Line type="monotone" dataKey="resolved" stroke="#10B981" strokeWidth={2} name="Resolved" />
+                  <Line type="monotone" dataKey="pending" stroke="#F59E0B" strokeWidth={2} name="Pending" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Pie Chart */}
+            {/* Category Distribution */}
             <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Issue Categories</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Complaint Categories</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
-                    data={issueDistribution}
+                    data={categoryData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
                     outerRadius={80}
-                    paddingAngle={5}
                     dataKey="value"
                   >
-                    {issueDistribution.map((entry, index) => (
+                    {categoryData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -284,44 +190,56 @@ export default function OperationalDashboard() {
             </div>
           </div>
 
-          {/* Workflow Overview */}
+          {/* Area Performance */}
+          <div className="bg-white p-6 rounded-lg shadow mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Area Performance</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={performanceData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="area" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="efficiency" fill="#3B82F6" name="Efficiency %" />
+                <Bar dataKey="complaints" fill="#EF4444" name="Complaints" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Recent Activities Table */}
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Workflow Overview</h3>
-            <div className="flex items-center justify-around">
-              {/* Level 1 */}
-              <div className="text-center">
-                <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <div className="text-center">
-                    <svg className="w-12 h-12 text-blue-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <p className="text-sm font-semibold text-blue-800">Level 1</p>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 font-medium">Cleaner Notification</p>
-                <p className="text-xs text-green-600">Alert Sent</p>
-              </div>
-
-              {/* Arrow */}
-              <div className="flex items-center">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </div>
-
-              {/* Level 2 */}
-              <div className="text-center">
-                <div className="w-32 h-32 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                  <div className="text-center">
-                    <svg className="w-12 h-12 text-orange-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                    </svg>
-                    <p className="text-sm font-semibold text-orange-800">Level 2</p>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 font-medium">Supervisor Escalation</p>
-                <p className="text-xs text-orange-600">Escalated to Supervisor</p>
-              </div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Activities</h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Activity ID</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {recentActivities.map((activity) => (
+                    <tr key={activity.id}>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{activity.id}</td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        <span className={`px-2 py-1 text-xs rounded-full ${getTypeColor(activity.type)}`}>
+                          {activity.type}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activity.location}</td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(activity.status)}`}>
+                          {activity.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{activity.time}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </main>

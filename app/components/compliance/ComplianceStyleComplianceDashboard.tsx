@@ -45,23 +45,7 @@ export default function ComplianceDashboard() {
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md">
         {/* Navigation */}
-        <nav className="mt-6">
-          <ul className="space-y-2 px-4">
-            {["Dashboard", "Operational", "Performance", "Geographic", "AI Insights", "Compliance", "Attendance"].map((item) => (
-              <li key={item}>
-                <button
-                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                    item === "Compliance"
-                      ? "bg-green-500 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {item}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
+
 
         {/* Filters */}
         <div className="mt-8 px-4">
