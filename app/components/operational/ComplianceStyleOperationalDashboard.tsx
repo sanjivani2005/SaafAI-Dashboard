@@ -41,82 +41,9 @@ export default function OperationalDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md">
-        {/* Navigation */}
-        <nav className="mt-6">
-          <ul className="space-y-2 px-4">
-            {["Dashboard", "Operational", "Performance", "Geographic", "AI Insights", "Compliance", "Attendance"].map((item) => (
-              <li key={item}>
-                <button
-                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                    item === "Operational"
-                      ? "bg-green-500 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {item}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* Filters */}
-        <div className="mt-8 px-4">
-          <h3 className="text-sm font-semibold text-gray-600 mb-3">SLA Status</h3>
-          <div className="space-y-2 mb-6">
-            {["all", "compliant", "breached"].map((status) => (
-              <button
-                key={status}
-                onClick={() => setSlaStatus(status)}
-                className={`w-full text-left px-3 py-2 rounded text-sm capitalize ${slaStatus === status
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-              >
-                {status === "all" ? "All" : status.charAt(0).toUpperCase() + status.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <h3 className="text-sm font-semibold text-gray-600 mb-3">Time Range</h3>
-          <div className="space-y-2 mb-6">
-            {["today", "week", "month"].map((range) => (
-              <button
-                key={range}
-                onClick={() => setTimeRange(range)}
-                className={`w-full text-left px-3 py-2 rounded text-sm capitalize ${timeRange === range
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-              >
-                {range.charAt(0).toUpperCase() + range.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <h3 className="text-sm font-semibold text-gray-600 mb-3">Category</h3>
-          <div className="space-y-2">
-            {["all", "infrastructure", "cleaner issues"].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`w-full text-left px-3 py-2 rounded text-sm capitalize ${category === cat
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-              >
-                {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="max-w-6xl mx-auto flex flex-col">
         {/* Dashboard Content */}
         <main className="flex-1 p-6">
           {/* Summary Cards */}
